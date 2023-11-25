@@ -18,7 +18,6 @@ def hello_world():
 def chat_handler():
     try:
         data = request.get_json()
-        print(data)
         if not valid_data(data): 
             return jsonify(
                 {"chat": {"role": "assistant", "content": "It seems your request was not properly formatted"}, "suggestions": []}
@@ -27,8 +26,10 @@ def chat_handler():
         
 
         messages = list(map(lambda x: x['chat'], data))
-        # response_text = ai_chat(messages)
-        return jsonify({"chat": {"role": "assistant", "content": 'response_text'}, "suggestions": []})
+        response_text, suggestions = ai_chat(messages)
+        
+        
+        return jsonify({"chat": {"role": "assistant", "content": response_text}, "suggestions": suggestions})
     except:
         return jsonify({"chat": {"role": "assistant", "content": "An unexpected error has occurred"}, "suggestions": []})
 
