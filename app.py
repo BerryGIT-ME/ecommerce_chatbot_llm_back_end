@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/check', methods=['GET', 'POST', 'PUT', 'PATCH'])
-def helthcheck():
+def healthcheck():
     return jsonify({"message": "Ok"})
 
 @app.route('/api', methods=['GET'])
