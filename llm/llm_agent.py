@@ -5,9 +5,14 @@ from llm.prompt_templates import system_message, decode_model_prompt_template, s
 from db.initialize import get_db_connection
 import pandas as pd
 import sys
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
 
 connection = get_db_connection()
 model_temperature = 0.6
+similarity_score = 0.6
+k_nearest_neigbors = 5
 
 api_key = os.getenv('OPEN_AI_API_KEY')
 
@@ -42,7 +47,13 @@ def execute_query_for_costomer_needs(customer_needs: str):
     return [value for key, value in results.T.to_dict().items()]
 
 def get_product_similar_to_customer_needs(customer_need: str):
-    return []
+    embeddings = OpenAIEmbeddings()
+    try: 
+        new_db = FAISS.load_local("ecommerce_index", embeddings)
+        docs = new_db.similarity_search_with_relevance_scores(customer_need, k_nearest_neigbors)
+        return [d.metadata for d, score in docs if score > similarity_score]
+    except:
+        return []
 
 def combine_query_results_and_similar_products(total_results):
     # this simply removes any duplicates
