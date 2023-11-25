@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from llm.llm_agent import ai_chat
 from flask_cors import CORS
+from validate import valid_data
 
 load_dotenv()
 
@@ -15,11 +16,21 @@ def hello_world():
 
 @app.route('/api', methods=['POST'])
 def chat_handler():
-    data = request.get_json()
-    messages = data['messages']
+    try:
+        data = request.get_json()
+        print(data)
+        if not valid_data(data): 
+            return jsonify(
+                {"chat": {"role": "assistant", "content": "It seems your request was not properly formatted"}, "suggestions": []}
+            )
+        
+        
 
-    response_text = ai_chat(messages)
-    return jsonify({"role": "assistant", "content": response_text})
+        messages = list(map(lambda x: x['chat'], data))
+        # response_text = ai_chat(messages)
+        return jsonify({"chat": {"role": "assistant", "content": 'response_text'}, "suggestions": []})
+    except:
+        return jsonify({"chat": {"role": "assistant", "content": "An unexpected error has occurred"}, "suggestions": []})
 
 if __name__ == '__main__':
    app.run(debug=True)
