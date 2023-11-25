@@ -9,6 +9,9 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/check', methods=['GET', 'POST', 'PUT', 'PATCH'])
+def healthcheck():
+    return jsonify({"message": "Ok"})
 
 @app.route('/api', methods=['GET'])
 def hello_world():
