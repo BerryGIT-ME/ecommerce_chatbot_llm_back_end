@@ -8,7 +8,9 @@ username = os.getenv('USER_NAME')
 password = os.getenv('PASSWORD')
 ssl_mode = os.getenv('SSL_MODE')
 
-engine = create_engine(f"mysql+mysqlconnector://{username}:{password}@{host}:{port}/{db_name}")
+def get_db_connection():
+    engine = create_engine(f"mysql+mysqlconnector://{username}:{password}@{host}:{port}/{db_name}")
+    # Test the connection
+    connection = engine.connect()
 
-# Test the connection
-connection = engine.connect()
+    return connection
